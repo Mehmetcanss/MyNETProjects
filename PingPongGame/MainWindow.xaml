@@ -1,0 +1,54 @@
+﻿<Window x:Class="PingPongGame.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PingPongGame"
+        xmlns:converters="clr-namespace:PingPongGame.Converters"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        mc:Ignorable="d"
+        Top="{Binding Top, Mode=OneWayToSource}"
+        WindowState="Maximized">
+    <Window.DataContext>
+        <local:PingPongBoard></local:PingPongBoard>
+    </Window.DataContext>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding WindowLoadedCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Window.Resources>
+        <converters:RectangleMultiBindingConverter x:Key="RectangleHelperConverter"></converters:RectangleMultiBindingConverter>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Rectangle x:Name="TopRect" Height="30" Fill="Red" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Row="0">
+        </Rectangle>
+        <Rectangle x:Name="BottomRect" Height="30" Fill="Red" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Row="2"></Rectangle>
+        
+    <Canvas x:Name="canvas" Grid.Row="1"
+            local:SizeObserver.Observe="True"
+            local:SizeObserver.ObservedWidth="{Binding Width, Mode=OneWayToSource}"
+            local:SizeObserver.ObservedHeight="{Binding Height, Mode=OneWayToSource}"
+            local:MouseBehavior.MouseMoveCommand="{Binding MouseMoveCommand}" 
+            Background="Transparent">
+
+            <Rectangle x:Name="Player" Height="{Binding Player.Height}"
+                       Width="{Binding Player.Width}"
+                       Fill="Red" Canvas.Top="{Binding Player.Top}"></Rectangle>
+            <Rectangle x:Name="Enemy" Height="{Binding Enemy.Height}" Width="{Binding Enemy.Width}" Fill="Red" 
+                       Canvas.Top="{Binding Enemy.Top}" Canvas.Right="0"></Rectangle>
+        
+        <Ellipse Fill="Blue"
+                 Canvas.Top="{Binding Ball.Top}"
+                 Canvas.Left="{Binding Ball.Left}"
+            Height="{Binding Ball.Height}" 
+                Width="{Binding Ball.Width}"></Ellipse>
+    </Canvas>
+    </Grid>
+
+</Window>

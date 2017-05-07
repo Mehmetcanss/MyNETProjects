@@ -21,25 +21,36 @@ namespace PingPongGame
         private double _width;
         private double _height;
         private Racket _enemy;
-        private Stopwatch st;
-        private double _godScale = 5;
+        private ShapeWithPoints _superEnemy;
 
-        public double GodScale
+        private CanvasShape _currentEnemy;
+
+        public CanvasShape CurrentEnemy
         {
-            get { return _godScale; }
+            get { return _currentEnemy; }
+            set { _currentEnemy = value; }
+        }
+
+
+        public ShapeWithPoints SuperEnemy
+        {
+            get { return _superEnemy; }
             set
             {
-                _godScale = value;
-                Notify("GodScale");
+                _superEnemy = value;
+                Notify("SuperEnemy");
             }
         }
+
+
+        private Stopwatch st;
+
 
         private Ball _ball;
         private DispatcherTimer timer;
         private MediaPlayer _mediaPlayer = new MediaPlayer();
         Random random = new Random();
-        int randomBottomBound = 10;
-        int randomUpperBound = 40;
+
 
         public Ball Ball
         {
@@ -122,6 +133,7 @@ namespace PingPongGame
         {
             this.Player = new Racket(25, 500);
             this.Enemy = new Racket(25, 80);
+            this.CurrentEnemy = Enemy;
 
             InitCommands();
         }
@@ -223,9 +235,10 @@ namespace PingPongGame
             }
 
 
-            if (Ball.Top < this.Height - Enemy.Height)
-                catchBall();
-            else Enemy.Top = this.Height - Enemy.Height;
+
+            catchBall();
+
+
 
 
             if (st.ElapsedMilliseconds > 1000)
@@ -240,19 +253,41 @@ namespace PingPongGame
         private void catchBall()
         {
             //catch with the middle part of the racket
-            Enemy.Top = Ball.Top - Enemy.Height / 2;
-            
+            double top = Ball.Top - CurrentEnemy.Height / 2;
+            if (top < 0)
+                CurrentEnemy.Top = 0;
+            else if (top > this.Height - CurrentEnemy.Height)
+                CurrentEnemy.Top = this.Height - CurrentEnemy.Height;
+            else
+                CurrentEnemy.Top = Ball.Top - CurrentEnemy.Height / 2;
+
         }
 
         private void TurnOnGodMode(object par)
         {
-            this.Enemy.Height *= 5;
+            this.Enemy = null;
+            this.SuperEnemy = CreateSuperPolygon();
+            this.CurrentEnemy = SuperEnemy;
             this.GodMode = true;
             MediaPlayer mPlayer = new MediaPlayer();
-            randomBottomBound = 0;
-            randomUpperBound = 0;
+
             mPlayer.Open(new Uri("C:/Users/MSI/MyProjects/TestProjects/PingPongGame/Resources/GodMode.mp3"));
             mPlayer.Play();
+
+        }
+
+        private ShapeWithPoints CreateSuperPolygon()
+        {
+            PointCollection pc = new PointCollection();
+            pc.Add(new Point(100, 0));
+            pc.Add(new Point(200, 0));
+            pc.Add(new Point(200, 350));
+            pc.Add(new Point(100, 350));
+            pc.Add(new Point(100, 300));
+            pc.Add(new Point(160, 300));
+            pc.Add(new Point(160, 50));
+            pc.Add(new Point(100, 50));
+            return new ShapeWithPoints(pc);
 
         }
 
@@ -342,12 +377,12 @@ namespace PingPongGame
         {
             double BallTop = Ball.Top;
             double BallBottom = this.Height - Ball.Top - Ball.Height;
-            double EnemyTop = Enemy.Top;
-            double EnemyBottom = this.Height - Enemy.Top - Enemy.Height;
+            double EnemyTop = CurrentEnemy.Top;
+            double EnemyBottom = this.Height - CurrentEnemy.Top - CurrentEnemy.Height;
 
             bool a = BallTop + Ball.Height > EnemyTop;
             bool b = BallBottom + Ball.Height > EnemyBottom;
-            bool c = Ball.Left >= this.Width - Enemy.Width;
+            bool c = Ball.Left >= this.Width - CurrentEnemy.Width;
 
             return a && b && c;
 

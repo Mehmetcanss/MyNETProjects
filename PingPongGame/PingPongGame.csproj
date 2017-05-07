@@ -56,6 +56,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AggressiveObject.cs" />
+    <Compile Include="AggressiveRacket.cs" />
+    <Compile Include="CanvasShape.cs" />
     <Compile Include="Converters\GodModeConverter.cs" />
     <Compile Include="Converters\RectangleMultiBindingConverter.cs" />
     <Compile Include="CustomCommand.cs" />
@@ -64,6 +67,7 @@
     <Compile Include="PingPongBoard.cs" />
     <Compile Include="Racket.cs" />
     <Compile Include="SizeObserver.cs" />
+    <Compile Include="ShapeWithPoints.cs" />
     <Compile Include="VerticalDirection.cs" />
     <Compile Include="WindowBehavior.cs" />
     <Page Include="MainWindow.xaml">
@@ -79,6 +83,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="MyDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

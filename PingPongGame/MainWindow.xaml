@@ -18,7 +18,7 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Window.Resources>
-        
+        <BooleanToVisibilityConverter x:Key="boolVisConverter"></BooleanToVisibilityConverter>
         <DoubleAnimation x:Key="GodModeAnimation" Storyboard.TargetProperty="(LayoutTransform).(ScaleTransform.ScaleY)" From="0.2"  To="1" Duration="0:0:1"/>
         <ColorAnimation x:Key="ColorGodMode" Storyboard.TargetProperty="Fill.Color" To="BlueViolet" Duration="0:0:0:2" RepeatBehavior="4"></ColorAnimation>
     </Window.Resources>
@@ -46,9 +46,16 @@
                        Fill="Red" Canvas.Top="{Binding Player.Top}"></Rectangle>
             <Rectangle x:Name="Enemy" Height="{Binding Enemy.Height}" Width="{Binding Enemy.Width}" Fill="Red" 
                        Canvas.Top="{Binding Enemy.Top}" Canvas.Right="0">
-  
-                <Rectangle.Style>
-                    <Style TargetType="Rectangle">
+                <Rectangle.LayoutTransform>
+                    <ScaleTransform ScaleY="1"></ScaleTransform>
+                </Rectangle.LayoutTransform>
+            </Rectangle>
+            <Polygon Canvas.Right="0" Fill="Crimson" ClipToBounds="True" Canvas.Top="{Binding SuperEnemy.Top}" 
+                     Visibility="{Binding GodMode, Converter={StaticResource boolVisConverter}}"
+                     
+                     Points="{Binding SuperEnemy.Points}">
+                <Polygon.Style>
+                    <Style TargetType="Polygon">
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding Path=GodMode}" Value="True">
                                 <DataTrigger.EnterActions>
@@ -58,7 +65,7 @@
                                         </Storyboard>
 
                                     </BeginStoryboard>
-                                    
+
                                     <BeginStoryboard>
                                         <Storyboard>
                                             <StaticResource ResourceKey="ColorGodMode"></StaticResource>
@@ -68,12 +75,12 @@
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
-                </Rectangle.Style>
-                <Rectangle.LayoutTransform>
+                </Polygon.Style>
+                <Polygon.LayoutTransform>
                     <ScaleTransform ScaleY="1"></ScaleTransform>
-                </Rectangle.LayoutTransform>
-            </Rectangle>
-
+                </Polygon.LayoutTransform>
+                
+            </Polygon>
             <Ellipse Fill="Blue"
                  Canvas.Top="{Binding Ball.Top}"
                  Canvas.Left="{Binding Ball.Left}"

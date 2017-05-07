@@ -4,34 +4,8 @@ using System.Windows.Threading;
 
 namespace PingPongGame
 {
-    public class Ball : INotifyPropertyChanged
+    public class Ball : CanvasShape
     {
-        private double _top;
-        private double _left;
-        private double _height;
-
-        public double Height
-        {
-            get { return _height; }
-            set
-            {
-                _height = value;
-                Notify("Height");
-            }
-        }
-
-        private double _width;
-
-        public double Width
-        {
-            get { return _width; }
-            set
-            {
-                _width = value;
-                Notify("Width");
-            }
-        }
-
 
 
         private HorizontalDirection _horizontalDirection = HorizontalDirection.Left;
@@ -51,16 +25,6 @@ namespace PingPongGame
         }
 
 
-        public double Top
-        {
-            get { return _top; }
-            set
-            {
-                _top = value;
-                Notify("Top");
-            }
-        }
-
         public Ball(double height, double width, double top, double left)
         {
        
@@ -70,29 +34,6 @@ namespace PingPongGame
             this.Left = left;
 
         }
-
-
-
-        private void Notify(string v)
-        {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(v));
-        }
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public double Left
-        {
-            get { return _left; }
-            set
-            {
-                _left = value;
-                Notify("Left");
-            }
-        }
-
-      
-
 
     }
 }

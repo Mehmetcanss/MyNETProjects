@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace PingPongGame
@@ -21,8 +22,24 @@ namespace PingPongGame
         private double _height;
         private Racket _enemy;
         private Stopwatch st;
+        private double _godScale = 5;
+
+        public double GodScale
+        {
+            get { return _godScale; }
+            set
+            {
+                _godScale = value;
+                Notify("GodScale");
+            }
+        }
+
         private Ball _ball;
         private DispatcherTimer timer;
+        private MediaPlayer _mediaPlayer = new MediaPlayer();
+        Random random = new Random();
+        int randomBottomBound = 10;
+        int randomUpperBound = 40;
 
         public Ball Ball
         {
@@ -34,12 +51,25 @@ namespace PingPongGame
             }
         }
 
+        private bool _godMode;
+
+        public bool GodMode
+        {
+            get { return _godMode; }
+            set
+            {
+                _godMode = value;
+                Notify("GodMode");
+            }
+        }
 
 
         public double Width
         {
             get { return _width; }
-            set { _width = value;
+            set
+            {
+                _width = value;
                 Notify("Width");
             }
         }
@@ -49,7 +79,9 @@ namespace PingPongGame
         public double Height
         {
             get { return _height; }
-            set { _height = value;
+            set
+            {
+                _height = value;
                 Notify("Height");
             }
         }
@@ -68,7 +100,9 @@ namespace PingPongGame
         public Racket Enemy
         {
             get { return _enemy; }
-            set { _enemy = value;
+            set
+            {
+                _enemy = value;
                 Notify("Enemy");
             }
         }
@@ -86,10 +120,22 @@ namespace PingPongGame
 
         public PingPongBoard()
         {
-            this.Player = new Racket(25, 80);
+            this.Player = new Racket(25, 500);
             this.Enemy = new Racket(25, 80);
 
             InitCommands();
+        }
+
+        private ICommand _godModeCommand;
+
+        public ICommand GodModeCommand
+        {
+            get { return _godModeCommand; }
+            set
+            {
+                _godModeCommand = value;
+                Notify("GodModeCommand");
+            }
         }
 
 
@@ -98,6 +144,7 @@ namespace PingPongGame
         {
             this.MouseMoveCommand = new CustomCommand((obj) => { return true; }, MouseMove);
             this.WindowLoadedCommand = new CustomCommand((obj) => { return true; }, WindowLoaded);
+            this.GodModeCommand = new CustomCommand((obj) => { return true; }, TurnOnGodMode);
         }
 
         private void Notify(string v)
@@ -112,12 +159,13 @@ namespace PingPongGame
 
 
             //ball hit south bound
-            if(ballTop + Ball.Height > this.Height)
+            if (ballTop + Ball.Height > this.Height)
             {
                 Ball.VerticalDirection = VerticalDirection.Up;
 
-            //ball hit north bound
-            } else if(ballTop <= 1)
+                //ball hit north bound
+            }
+            else if (ballTop <= 1)
             {
                 Ball.VerticalDirection = VerticalDirection.Down;
             }
@@ -125,17 +173,22 @@ namespace PingPongGame
             if (HitPlayer())
             {
                 Ball.HorizontalDirection = HorizontalDirection.Right;
+                _mediaPlayer.Open(new Uri("C:/Users/MSI/MyProjects/TestProjects/PingPongGame/Resources/bong.mp3"));
+                _mediaPlayer.Play();
 
-            } else if(HitEnemy())
+            }
+            else if (HitEnemy())
             {
                 Ball.HorizontalDirection = HorizontalDirection.Left;
+                _mediaPlayer.Open(new Uri("C:/Users/MSI/MyProjects/TestProjects/PingPongGame/Resources/bong.mp3"));
+                _mediaPlayer.Play();
             }
 
-            if(Ball.Left < 0 || Ball.Left > this.Width)
+            if (Ball.Left < speed * -1 || Ball.Left > this.Width + speed)
             {
                 MessageBox.Show("You Lost You Fucking Loser!!!");
-                timer.Stop();
-                
+                RestartGame();
+
             }
 
             if (Ball.HorizontalDirection == HorizontalDirection.Right)
@@ -169,16 +222,38 @@ namespace PingPongGame
                 }
             }
 
+
             if (Ball.Top < this.Height - Enemy.Height)
-                Enemy.Top = Ball.Top;
+                catchBall();
             else Enemy.Top = this.Height - Enemy.Height;
-            if(st.ElapsedMilliseconds > 1000)
+
+
+            if (st.ElapsedMilliseconds > 1000)
             {
                 speed++;
                 st.Reset();
                 st.Start();
             }
+
+        }
+
+        private void catchBall()
+        {
+            //catch with the middle part of the racket
+            Enemy.Top = Ball.Top - Enemy.Height / 2;
             
+        }
+
+        private void TurnOnGodMode(object par)
+        {
+            this.Enemy.Height *= 5;
+            this.GodMode = true;
+            MediaPlayer mPlayer = new MediaPlayer();
+            randomBottomBound = 0;
+            randomUpperBound = 0;
+            mPlayer.Open(new Uri("C:/Users/MSI/MyProjects/TestProjects/PingPongGame/Resources/GodMode.mp3"));
+            mPlayer.Play();
+
         }
 
         private ICommand _mouseMoveCommand;
@@ -199,7 +274,9 @@ namespace PingPongGame
         public ICommand WindowLoadedCommand
         {
             get { return _windowLoaded; }
-            set { _windowLoaded = value;
+            set
+            {
+                _windowLoaded = value;
                 Notify("WindowLoadedCommand");
             }
         }
@@ -219,7 +296,15 @@ namespace PingPongGame
 
         }
 
-        private void WindowLoaded(object par) {
+        private void WindowLoaded(object par)
+        {
+
+            StartGame();
+
+        }
+
+        private void StartGame()
+        {
             this.Ball = new Ball(20, 20, this.Height / 2, this.Width / 2);
             timer = new DispatcherTimer();
             st = new Stopwatch();
@@ -227,7 +312,15 @@ namespace PingPongGame
             timer.Tick += Timer_Tick;
             timer.Start();
             st.Start();
+        }
 
+        private void RestartGame()
+        {
+            this.Ball = new Ball(20, 20, this.Height / 2, this.Width / 2);
+            timer.Stop();
+            timer.Start();
+            st.Stop();
+            st.Start();
 
         }
 
@@ -240,10 +333,10 @@ namespace PingPongGame
 
             bool a = BallTop + Ball.Height > PlayerTop;
             bool b = BallBottom + Ball.Height > PlayerBottom;
-            bool c = Ball.Left < Player.Width && Ball.Left > 0;
+            bool c = Ball.Left < Player.Width && Ball.Left > speed * -1;
 
             return a && b && c;
-           
+
         }
         private bool HitEnemy()
         {

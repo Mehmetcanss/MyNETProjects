@@ -23,6 +23,7 @@ namespace PingPongGame
         public MainWindow()
         {
             InitializeComponent();
+
             
         }
     }

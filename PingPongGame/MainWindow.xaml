@@ -18,7 +18,9 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Window.Resources>
-        <converters:RectangleMultiBindingConverter x:Key="RectangleHelperConverter"></converters:RectangleMultiBindingConverter>
+        
+        <DoubleAnimation x:Key="GodModeAnimation" Storyboard.TargetProperty="(LayoutTransform).(ScaleTransform.ScaleY)" From="0.2"  To="1" Duration="0:0:1"/>
+        <ColorAnimation x:Key="ColorGodMode" Storyboard.TargetProperty="Fill.Color" To="BlueViolet" Duration="0:0:0:2" RepeatBehavior="4"></ColorAnimation>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -27,10 +29,12 @@
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
         <Rectangle x:Name="TopRect" Height="30" Fill="Red" HorizontalAlignment="Stretch" VerticalAlignment="Top" Grid.Row="0">
+
         </Rectangle>
+        <Button Width="150" Command="{Binding GodModeCommand}">Turn On GodMode</Button>
         <Rectangle x:Name="BottomRect" Height="30" Fill="Red" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Row="2"></Rectangle>
-        
-    <Canvas x:Name="canvas" Grid.Row="1"
+
+        <Canvas x:Name="canvas" Grid.Row="1"
             local:SizeObserver.Observe="True"
             local:SizeObserver.ObservedWidth="{Binding Width, Mode=OneWayToSource}"
             local:SizeObserver.ObservedHeight="{Binding Height, Mode=OneWayToSource}"
@@ -41,14 +45,41 @@
                        Width="{Binding Player.Width}"
                        Fill="Red" Canvas.Top="{Binding Player.Top}"></Rectangle>
             <Rectangle x:Name="Enemy" Height="{Binding Enemy.Height}" Width="{Binding Enemy.Width}" Fill="Red" 
-                       Canvas.Top="{Binding Enemy.Top}" Canvas.Right="0"></Rectangle>
-        
-        <Ellipse Fill="Blue"
+                       Canvas.Top="{Binding Enemy.Top}" Canvas.Right="0">
+  
+                <Rectangle.Style>
+                    <Style TargetType="Rectangle">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=GodMode}" Value="True">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <StaticResource ResourceKey="GodModeAnimation"></StaticResource>
+                                        </Storyboard>
+
+                                    </BeginStoryboard>
+                                    
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <StaticResource ResourceKey="ColorGodMode"></StaticResource>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Rectangle.Style>
+                <Rectangle.LayoutTransform>
+                    <ScaleTransform ScaleY="1"></ScaleTransform>
+                </Rectangle.LayoutTransform>
+            </Rectangle>
+
+            <Ellipse Fill="Blue"
                  Canvas.Top="{Binding Ball.Top}"
                  Canvas.Left="{Binding Ball.Left}"
             Height="{Binding Ball.Height}" 
                 Width="{Binding Ball.Width}"></Ellipse>
-    </Canvas>
+        </Canvas>
     </Grid>
 
 </Window>

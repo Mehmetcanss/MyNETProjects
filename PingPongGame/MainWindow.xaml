@@ -45,12 +45,12 @@
                        Width="{Binding Player.Width}"
                        Fill="Red" Canvas.Top="{Binding Player.Top}"></Rectangle>
             <Rectangle x:Name="Enemy" Height="{Binding Enemy.Height}" Width="{Binding Enemy.Width}" Fill="Red" 
-                       Canvas.Top="{Binding Enemy.Top}" Canvas.Right="0">
+                       Canvas.Top="{Binding Enemy.Top}" Canvas.Left="{Binding Enemy.Left}">
                 <Rectangle.LayoutTransform>
                     <ScaleTransform ScaleY="1"></ScaleTransform>
                 </Rectangle.LayoutTransform>
             </Rectangle>
-            <Polygon Canvas.Right="0" Fill="Crimson" ClipToBounds="True" Canvas.Top="{Binding SuperEnemy.Top}" 
+            <Polygon Canvas.Left="{Binding SuperEnemy.Left}" Fill="Crimson" ClipToBounds="True" Canvas.Top="{Binding SuperEnemy.Top}" 
                      Visibility="{Binding GodMode, Converter={StaticResource boolVisConverter}}"
                      
                      Points="{Binding SuperEnemy.Points}">
@@ -86,6 +86,10 @@
                  Canvas.Left="{Binding Ball.Left}"
             Height="{Binding Ball.Height}" 
                 Width="{Binding Ball.Width}"></Ellipse>
+            <Polygon Canvas.Left="{Binding SuperEnemy.Bullet.Left}" 
+                     Points="{Binding SuperEnemy.Bullet.Points}"
+                    
+                     Fill="Black" Canvas.Top="{Binding SuperEnemy.Bullet.Top}"></Polygon>
         </Canvas>
     </Grid>
 

@@ -16,12 +16,12 @@ namespace PingPongGame
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private double speed = 5;
+        private double speed = 10;
         private Racket _player;
         private double _width;
         private double _height;
         private Racket _enemy;
-        private ShapeWithPoints _superEnemy;
+        private AggressiveRacket _superEnemy;
 
         private CanvasShape _currentEnemy;
 
@@ -32,7 +32,7 @@ namespace PingPongGame
         }
 
 
-        public ShapeWithPoints SuperEnemy
+        public AggressiveRacket SuperEnemy
         {
             get { return _superEnemy; }
             set
@@ -131,8 +131,10 @@ namespace PingPongGame
 
         public PingPongBoard()
         {
-            this.Player = new Racket(25, 500);
+            this.Player = new Racket(25, 90);
+
             this.Enemy = new Racket(25, 80);
+
             this.CurrentEnemy = Enemy;
 
             InitCommands();
@@ -182,7 +184,7 @@ namespace PingPongGame
                 Ball.VerticalDirection = VerticalDirection.Down;
             }
 
-            if (HitPlayer())
+            if (HitPlayer(Ball))
             {
                 Ball.HorizontalDirection = HorizontalDirection.Right;
                 _mediaPlayer.Open(new Uri("C:/Users/MSI/MyProjects/TestProjects/PingPongGame/Resources/bong.mp3"));
@@ -243,11 +245,12 @@ namespace PingPongGame
 
             if (st.ElapsedMilliseconds > 1000)
             {
-                speed++;
-                st.Reset();
-                st.Start();
-            }
+                //speed++;
 
+                //st.Reset();
+                //st.Start();
+
+            }
         }
 
         private void catchBall()
@@ -267,27 +270,29 @@ namespace PingPongGame
         {
             this.Enemy = null;
             this.SuperEnemy = CreateSuperPolygon();
+            SuperEnemy.Left = this.Width - SuperEnemy.Width;
             this.CurrentEnemy = SuperEnemy;
             this.GodMode = true;
             MediaPlayer mPlayer = new MediaPlayer();
 
             mPlayer.Open(new Uri("C:/Users/MSI/MyProjects/TestProjects/PingPongGame/Resources/GodMode.mp3"));
             mPlayer.Play();
+            mPlayer.Play();
 
         }
 
-        private ShapeWithPoints CreateSuperPolygon()
+        private AggressiveRacket CreateSuperPolygon()
         {
             PointCollection pc = new PointCollection();
+            pc.Add(new Point(0, 0));
             pc.Add(new Point(100, 0));
-            pc.Add(new Point(200, 0));
-            pc.Add(new Point(200, 350));
             pc.Add(new Point(100, 350));
-            pc.Add(new Point(100, 300));
-            pc.Add(new Point(160, 300));
-            pc.Add(new Point(160, 50));
-            pc.Add(new Point(100, 50));
-            return new ShapeWithPoints(pc);
+            pc.Add(new Point(0, 350));
+            pc.Add(new Point(0, 300));
+            pc.Add(new Point(60, 300));
+            pc.Add(new Point(60, 50));
+            pc.Add(new Point(0, 50));
+            return new AggressiveRacket(pc);
 
         }
 
@@ -341,12 +346,32 @@ namespace PingPongGame
         private void StartGame()
         {
             this.Ball = new Ball(20, 20, this.Height / 2, this.Width / 2);
+            Enemy.Left = this.Width - Enemy.Width;
             timer = new DispatcherTimer();
             st = new Stopwatch();
             timer.Interval = TimeSpan.FromMilliseconds(1);
             timer.Tick += Timer_Tick;
+            timer.Tick += Attack;
             timer.Start();
             st.Start();
+        }
+
+        private void Attack(object sender, EventArgs e)
+        {
+            if(this.CurrentEnemy!= null)
+            {
+                if(this.CurrentEnemy is IAggressive)
+                {
+                    ((IAggressive)CurrentEnemy).Attack();
+                    if(HitPlayer(this.SuperEnemy.Bullet))
+                    {
+                        MediaPlayer player = new MediaPlayer();
+                        player.Open(new Uri("C:/Users/MSI/MyProjects/TestProjects/PingPongGame/Resources/ShotgonHit.mp3"));
+                        player.Play();
+                    }
+                }
+                
+            }
         }
 
         private void RestartGame()
@@ -359,16 +384,16 @@ namespace PingPongGame
 
         }
 
-        private bool HitPlayer()
+        private bool HitPlayer(CanvasShape shape)
         {
-            double BallTop = Ball.Top;
-            double BallBottom = this.Height - Ball.Top - Ball.Height;
+            double BallTop = shape.Top;
+            double BallBottom = this.Height - shape.Top - shape.Height;
             double PlayerTop = Player.Top;
             double PlayerBottom = this.Height - Player.Top - Player.Height;
 
-            bool a = BallTop + Ball.Height > PlayerTop;
-            bool b = BallBottom + Ball.Height > PlayerBottom;
-            bool c = Ball.Left < Player.Width && Ball.Left > speed * -1;
+            bool a = BallTop + shape.Height > PlayerTop;
+            bool b = BallBottom + shape.Height > PlayerBottom;
+            bool c = shape.Left < Player.Width && shape.Left > speed * -1;
 
             return a && b && c;
 

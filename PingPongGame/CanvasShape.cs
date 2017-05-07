@@ -21,7 +21,7 @@ namespace PingPongGame
             }
         }
 
-        private double _left;
+        private double _left = 0;
 
         public double Left
         {
@@ -34,7 +34,8 @@ namespace PingPongGame
         }
 
 
-        private double _top;
+
+        private double _top = 0;
 
         public double Top
         {

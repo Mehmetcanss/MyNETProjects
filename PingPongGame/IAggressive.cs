@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PingPongGame
 {
-    public interface AggressiveObject
+    public interface IAggressive
     {
         void Attack();
     }

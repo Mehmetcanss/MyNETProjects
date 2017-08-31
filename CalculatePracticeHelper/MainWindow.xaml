@@ -1,0 +1,36 @@
+﻿<Window x:Class="CalculatePracticeHelper.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CalculatePracticeHelper"
+        xmlns:converters="clr-namespace:CalculatePracticeHelper.Converters"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition></ColumnDefinition>
+            <ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.Resources>
+            <converters:DoubleStringConverter x:Key="doubleStringConverter"></converters:DoubleStringConverter>
+            <converters:NumbersVisibilityConverter x:Key="numbersVisibilityConverter"></converters:NumbersVisibilityConverter>
+            <converters:AnswerCorrectConverter x:Key="answerCorrectConverter"></converters:AnswerCorrectConverter>
+        </Grid.Resources>
+            <Button VerticalAlignment="Top" Margin="0,20,0,0" x:Name="buttonStart" Height="50" Width="70" Command="{Binding StartGameCommand}">Start</Button>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Height="Auto" Width="Auto">
+            <TextBox Width="100" HorizontalContentAlignment="Center" Visibility="{Binding NumbersVisible, Mode=OneWay, Converter={StaticResource numbersVisibilityConverter}}" VerticalContentAlignment="Center" FontSize="20" FontWeight="Bold" Height="50" Margin="0,0,20,0" x:Name="firstNumber" IsEnabled="False" Text="{Binding FirstNumber, Mode=OneWay, Converter={StaticResource doubleStringConverter}}"></TextBox>
+            <TextBox Width="100" HorizontalContentAlignment="Center" Visibility="{Binding NumbersVisible, Mode=OneWay, Converter={StaticResource numbersVisibilityConverter}}" VerticalContentAlignment="Center" FontSize="20" FontWeight="Bold" Height="50" x:Name="secondNumber" IsEnabled="False" Text="{Binding SecondNumber, Mode=OneWay, Converter={StaticResource doubleStringConverter}}"></TextBox>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,20">
+
+            <TextBox HorizontalContentAlignment="Center" VerticalContentAlignment="Center" x:Name="answerBox" FontSize="20" HorizontalAlignment="Center" Height="70" Width="100" Text="{Binding Answer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource doubleStringConverter}}" ></TextBox>
+            <Button x:Name="checkButton" Width="88" Command="{Binding CheckAnswer}">Check</Button>
+        </StackPanel>
+        <StackPanel Orientation="Vertical" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Label HorizontalContentAlignment="Center" FontSize="20" x:Name="labelElapsedTime" Content="{Binding ElapsedSeconds, Mode=OneWay, Converter={StaticResource doubleStringConverter}}" Height="50" Width="100"></Label>
+            <Image Height="64" Width="64" Source="{Binding AnswerCorrect, Mode=OneWay, Converter={StaticResource answerCorrectConverter}}"></Image>
+        </StackPanel>
+        
+    </Grid>
+</Window>

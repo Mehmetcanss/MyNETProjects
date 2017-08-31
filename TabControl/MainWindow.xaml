@@ -1,0 +1,104 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TabControl"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:converters="clr-namespace:TabControl.Converters"
+        xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" x:Class="TabControl.MainWindow"
+        mc:Ignorable="d"
+        WindowState="Maximized"
+        Title="MainWindow">
+
+    <Grid>
+        <Grid.Resources>
+            <converters:DataGridColumnVisibilityConverter x:Key="DataGridColumnVisibilityConverter"></converters:DataGridColumnVisibilityConverter>
+            <converters:DataGridItemsSourceConverter  x:Key="DataGridItemsSourceConverter"></converters:DataGridItemsSourceConverter>
+            <local:BindingProxy Data="{Binding}" x:Key="proxy"></local:BindingProxy>
+        </Grid.Resources>
+        <TabControl Margin="10" BorderThickness="0" Background="LightGray" TabStripPlacement="Left" Foreground="White">
+            <TabControl.Resources>
+                <Style TargetType="{x:Type TabItem}">
+
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type TabItem}">
+                                <Grid x:Name="Panel" Height="25">
+                                    <Border Padding="3" HorizontalAlignment="Stretch">
+                                        <Path x:Name="InnerRect" Width="72.1919" HorizontalAlignment="Stretch" Stretch="Fill" Fill="Transparent" Data="F1 M 64.099,47.486L 131.599,47.486L 131.599,51.6102L 136.291,54.777L 131.599,57.829L 131.599,61.986L 64.099,61.986L 64.099,47.486 Z "/>
+                                    </Border>
+                                    <ContentPresenter x:Name="ContentSite"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        ContentSource="Header"
+                                        Margin="10,2"/>
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="InnerRect" Property="Fill" Value="Blue" />
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="False">
+                                        <Setter TargetName="InnerRect" Property="Fill" Value="Transparent" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Background" Value="White"/>
+
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="true">
+                            <Setter Property="Foreground" Value="White"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </TabControl.Resources>
+            <TabItem Header="General">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <ToolBarTray Grid.Row="0" Background="WhiteSmoke">
+                        <ToolBar Style="{DynamicResource ToolBarStyle}" >
+                            <ComboBox Background="WhiteSmoke" SelectedIndex="0" VerticalAlignment="Bottom" SelectedItem="{Binding ResourceType, Mode=TwoWay}" ItemsSource="{Binding ResourceTypes}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Padding="5,1,5,1">
+                                            <ContentPresenter Content="{Binding}"></ContentPresenter>
+                                        </Border>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </ToolBar>
+                        <ToolBar Style="{DynamicResource ToolBarStyle}">
+                            <Button Command="{Binding AddCommand}" Background="Transparent" Content="Add"/>
+                            <Button Background="Transparent" Content="Delete"/>
+                            <Button Background="Transparent" Content="Clear"/>
+                        </ToolBar>
+                    </ToolBarTray>
+                    <DataGrid Grid.Row="1" AutoGenerateColumns="False" x:Name="SizeGrid" CanUserSortColumns="True" CanUserResizeColumns="True" ItemsSource="{Binding ResourceType, Converter={StaticResource DataGridItemsSourceConverter}, ConverterParameter={StaticResource proxy}}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Width="Auto" CanUserSort="True" Binding="{Binding Name, Mode=TwoWay}" CanUserReorder="True"/>
+                            <DataGridTextColumn Header="Value" Width="Auto" CanUserSort="True" Binding="{Binding Value, Mode=TwoWay}" CanUserReorder="True"/>
+                            <DataGridTextColumn x:Name="HexColumn" Header="Hex" Width="75" Binding="{Binding Hex, Mode=OneWay}" Visibility="{Binding Data.ResourceType, Converter={StaticResource DataGridColumnVisibilityConverter}, ConverterParameter='Hex', Source={StaticResource proxy}}"/>
+                            <DataGridTemplateColumn Header="Color" Width="100"  >
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <xctk:ColorPicker SelectedColor="{Binding Color, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Foreground="Black" StandardColorsHeader="Standard Colors" ShowStandardColors="True"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Security"/>
+            <TabItem Header="Details" />
+        </TabControl>
+
+    </Grid>
+</Window>

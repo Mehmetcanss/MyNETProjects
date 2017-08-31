@@ -39,11 +39,14 @@ namespace DelegatesAndLambda
         /// </summary>
         private Action<string, string, string> SomeFunction;
 
+        
+
         /// <summary>
         /// Func is a read made delegate that always has a return type
         /// The AnotherFunction is a Function variable that can be assigned, 
         /// it takes two parameters of type double and returns double
         /// </summary>
+
 
         private Func<double, double, string> AnotherFunction;
 
@@ -52,7 +55,9 @@ namespace DelegatesAndLambda
         /// Using Delegates with event handler
         /// </summary>
 
+        ///here is an event that requires a subscriber of type calculate Delegate
         private event CalculateDelegate someEvent;
+
 
         private event Func<double, double, string> anotherEvent;
 
@@ -66,15 +71,16 @@ namespace DelegatesAndLambda
 
             CalculateDelegate anotherCalc = delegate (int a, int b) { return a + b; };
 
-
+         
             SomeFunction = (a, b, c) => MessageBox.Show(a + b + c);
             
             AnotherFunction = (a, b) => ((a * b) * 10).ToString();
 
-            
+
 
             //other ways to declare 
 
+           
             SomeFunction = new Action<string, string, string>((a, b, c) => MessageBox.Show(a + b + c));
             SomeFunction = new Action<string, string, string>(delegate (string a, string b, string c) { MessageBox.Show("hello"); });
 

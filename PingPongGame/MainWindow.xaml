@@ -39,7 +39,7 @@
             local:SizeObserver.ObservedWidth="{Binding Width, Mode=OneWayToSource}"
             local:SizeObserver.ObservedHeight="{Binding Height, Mode=OneWayToSource}"
             local:MouseBehavior.MouseMoveCommand="{Binding MouseMoveCommand}" 
-            Background="Transparent">
+            Background="Yellow">
 
             <Rectangle x:Name="Player" Height="{Binding Player.Height}"
                        Width="{Binding Player.Width}"
@@ -81,7 +81,7 @@
                 </Polygon.LayoutTransform>
                 
             </Polygon>
-            <Ellipse Fill="Blue"
+            <Ellipse Fill="Beige"
                  Canvas.Top="{Binding Ball.Top}"
                  Canvas.Left="{Binding Ball.Left}"
             Height="{Binding Ball.Height}" 

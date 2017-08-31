@@ -13,6 +13,8 @@ namespace PingPongGame
 
         Action<object> execute;
 
+        Action<object> unexecute;
+
         public CustomCommand(Func<object, bool> can, Action<object> exec)
         {
             this.canExecute = can;

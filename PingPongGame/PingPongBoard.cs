@@ -345,7 +345,7 @@ namespace PingPongGame
 
         private void StartGame()
         {
-            this.Ball = new Ball(20, 20, this.Height / 2, this.Width / 2);
+            this.Ball = new Ball(100, 100, this.Height / 2, this.Width / 2);
             Enemy.Left = this.Width - Enemy.Width;
             timer = new DispatcherTimer();
             st = new Stopwatch();
@@ -376,7 +376,7 @@ namespace PingPongGame
 
         private void RestartGame()
         {
-            this.Ball = new Ball(20, 20, this.Height / 2, this.Width / 2);
+            this.Ball = new Ball(50, 50, this.Height / 2, this.Width / 2);
             timer.Stop();
             timer.Start();
             st.Stop();

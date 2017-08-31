@@ -1,0 +1,13 @@
+﻿<Window x:Class="UndoRedo_SingleObjectRepresntingchange.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+         
+    Title="MainWindow"  ResizeMode="NoResize"  Height="450" Width="450" WindowStyle="ToolWindow" >
+ 
+    <DockPanel LastChildFill="True">
+         
+        <Border Name="bdrMainArea"  BorderBrush="Navy" BorderThickness="2" >
+           
+        </Border>
+    </DockPanel>
+</Window>

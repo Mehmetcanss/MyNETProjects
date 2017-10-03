@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,56 +20,72 @@ namespace InvestigatingAwait
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
         DateTime one;
+
+        private string _number;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public string Number
+        {
+            get { return _number; }
+            set
+            {
+                _number = value;
+                Notify("Number");
+            }
+        }
+
+        private void Notify(string v)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(v));
+        }
+
+
         public MainWindow()
         {
             InitializeComponent();
-            MyTask().ContinueWith((task) => Console.Write("Hello"));
-            //MyMethodAsync().ContinueWith((x) => Console.WriteLine("Hello"));
-   
-        }
+            this.DataContext = this;
+            this.Number = "1";
 
-        private async Task<int> MyTask()
-        {
-            one = DateTime.Now;
-            Task<int> task =  MyMethodAsync();
-            Console.WriteLine("Hello called after: " + (DateTime.Now - one).TotalSeconds);
-            var result = await task;
-            Console.WriteLine("Endresult called after: " + (DateTime.Now - one).TotalSeconds);
-            return result;
 
         }
 
-        public async Task<int> MyMethodAsync()
+
+        public  Task<long> LongRunningOperationAsync() // assume we return an int from this long running operation 
         {
-            
-            Task<int> longRunningTask = LongRunningOperationAsync();
-            // independent work which doesn't need the result of LongRunningOperationAsync can be done here
-
-            int k = 24;
-            int c = k + 55;
-            Console.WriteLine(c + "called after: " + (DateTime.Now - one).TotalSeconds);
-
-            //and now we call await on the task if this task is finished, the thread will continue here
-            //if not MyMethod async will return to its caller and Console.WriteLine("Hello") will be called
-            int result = await longRunningTask;
-            //use the result 
-            Console.WriteLine(result + "called after: " + (DateTime.Now - one).TotalSeconds);
-            return result;
-        }
-
-        public async Task<int> LongRunningOperationAsync() // assume we return an int from this long running operation 
-        {
-            await Task.Run(() =>
+            long i = 0;
+            return Task.Run(() =>
             {
-                for (long i = 0; i < 1000000000; i++) ;
+                for (i = 0; i < 1000000000; i++) ;
+                return i;
             });
 
-            return 1;
+        ;
         }
 
-        
+        //async keyword allows you to use the "await" keyword, the code after await keyword is always run on the calling context,
+        //in this case the UI thread
+        private async void button_Click(object sender, RoutedEventArgs e)
+        {
+            //start a new task
+            var task =  LongRunningOperationAsync();
+            
+            //this code will immediately run without waiting
+            this.Number = "55";
+
+            //use await when you need the result of the task
+            var result = await task;
+            MessageBox.Show(result.ToString());
+        }
+
+        private void counter_Click(object sender, RoutedEventArgs e)
+        {
+            double no = Double.Parse(Number);
+            no++;
+            this.Number = no.ToString();
+        }
     }
 }
